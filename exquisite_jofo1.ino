@@ -32,13 +32,13 @@ void loop()
       delay(1000);
       analogWrite(R,0);
     }
-    else if (cel <= 18)
+    else if (cel < 18)
     {
       analogWrite(A,255);
       delay(1000);
       analogWrite(A,0);
     }
-    else if (cel > 18 && cel <= 90)
+    else if (cel > 18 && cel < 90)
     {
       analogWrite(V,255);
       delay(1000);
