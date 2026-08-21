@@ -46,8 +46,8 @@ void setup()
   servo2.attach(A1);
   servo2.write(0);
   Serial.begin(9600);
-  pinMode(movimiento1, INPUT);
-  pinMode(movimiento2, INPUT);
+  pinMode(sensor1, INPUT);
+  pinMode(sensor2, INPUT);
 }
 
 void loop()
@@ -56,13 +56,33 @@ void loop()
   movimiento2 = digitalRead(sensor2);
   
   valorluz = analogRead(luz);
-  realvalorluz = map(valorluz ,0,1024,0,100);
+  realvalorluz = map(valorluz ,0,1023,0,100);
   
   Serial.println("Valor luz:");
   Serial.println(realvalorluz);
   
   delay(200);
   
+  prender_foquito();
+  abrir_cerrar();
+  delay(1000);
+}
+
+void abrir_cerrar()
+{
+  if(movimiento1 == HIGH || movimiento2 == HIGH)
+  {
+     retroceder(); 
+     playMidi(13, midi1, ARRAY_LEN(midi1));
+  }
+  else
+  {
+    avanzar();
+  }
+}
+
+void prender_foquito()
+{
   if(realvalorluz < 30)
   {
     analogWrite(bombilla, 255);
@@ -71,24 +91,15 @@ void loop()
   {
     analogWrite(bombilla, 0);
   }
-  if(movimiento1 == HIGH || movimiento2 == HIGH)
-  {
-     avanzar(); 
-     playMidi(13, midi1, ARRAY_LEN(midi1));
-  }
-  else
-  {
-    retroceder();
-  }
-  delay(1000);
 }
 
 void avanzar()
 {
+  rotacion = 80;
   rotacion = rotacion + 10;
   servo1.write(rotacion);
   servo2.write(rotacion);
-  if(rotacion > 180)
+  if(rotacion > 80)
   {
     rotacion = rotacion - 10; 
   }
