@@ -14,9 +14,10 @@ Servo servo1;
 Servo servo2;
 bool movimiento1;
 bool movimiento2;
-int rotacion = 0;
+int rotacion;
 int valorluz;
 int realvalorluz;
+bool estaabierta = LOW;
 
 const int midi1[5][3] = {
  {Fb5, 273, 0},
@@ -39,12 +40,13 @@ void playMidi(int pin, const int notes[][3], size_t len)
 
 void setup()
 {
+  pinMode(bombilla, OUTPUT);
   pinMode(luz, INPUT);
   playMidi(13, midi1, ARRAY_LEN(midi1));
   servo1.attach(A0);
-  servo1.write(0);
+  servo1.write(80);
   servo2.attach(A1);
-  servo2.write(0);
+  servo2.write(80);
   Serial.begin(9600);
   pinMode(sensor1, INPUT);
   pinMode(sensor2, INPUT);
@@ -70,14 +72,29 @@ void loop()
 
 void abrir_cerrar()
 {
-  if(movimiento1 == HIGH || movimiento2 == HIGH)
+  if(movimiento1 == HIGH && estaabierta == LOW)
   {
-     retroceder(); 
+     abrir();
+     estaabierta = HIGH;
      playMidi(13, midi1, ARRAY_LEN(midi1));
   }
-  else
+  else if(movimiento1 == HIGH && estaabierta == HIGH)
   {
-    avanzar();
+     cerrar();
+     estaabierta = LOW;
+     playMidi(13, midi1, ARRAY_LEN(midi1));
+  }
+  else if(movimiento2 == HIGH && estaabierta == LOW)
+  {
+     abrir();
+     estaabierta = HIGH;
+     playMidi(13, midi1, ARRAY_LEN(midi1));
+  }
+  else if(movimiento2 == HIGH && estaabierta == HIGH)
+  {
+     cerrar();
+     estaabierta = LOW;
+     playMidi(13, midi1, ARRAY_LEN(midi1));
   }
 }
 
@@ -93,26 +110,14 @@ void prender_foquito()
   }
 }
 
-void avanzar()
+void abrir()
 {
-  rotacion = 80;
-  rotacion = rotacion + 10;
-  servo1.write(rotacion);
-  servo2.write(rotacion);
-  if(rotacion > 80)
-  {
-    rotacion = rotacion - 10; 
-  }
+  servo1.write(80);
+  servo2.write(80);
 }
 
-void retroceder()
+void cerrar()
 {
-  rotacion = rotacion - 10;
-  servo1.write(rotacion);
-  servo2.write(rotacion);
-  delay(1000);
-  if(rotacion < 0)
-  {
-    rotacion = rotacion + 10; 
-  }
+  servo1.write(0);
+  servo2.write(0);
 }
