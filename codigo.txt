@@ -1,0 +1,23 @@
+const int boton = 2;
+const int led = 8;
+
+int estadoLed = LOW;
+int estadoAnterior = HIGH;
+
+void setup() {
+  pinMode(boton, INPUT_PULLUP);
+  pinMode(led, OUTPUT);
+  digitalWrite(led, LOW);
+}
+
+void loop() {
+  int estadoBoton = digitalRead(boton);
+
+  if (estadoBoton == LOW && estadoAnterior == HIGH) {
+    estadoLed = !estadoLed;
+    digitalWrite(led, estadoLed);
+    delay(50);
+  }
+
+  estadoAnterior = estadoBoton;
+}
